@@ -1,0 +1,1 @@
+#Define Langgraph TypedDict State
