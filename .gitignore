@@ -1,11 +1,73 @@
-# Python-generated files
+# ==============================================================================
+# Python Core & Caching
+# ==============================================================================
 __pycache__/
-*.py[oc]
+*.py[cod]
+*$py.class
+*.so
+.Python
 build/
+develop-eggs/
 dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
 wheels/
-*.egg-info
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Virtual environments
-.venv
+# ==============================================================================
+# Environment & Dependency Managers (Including uv / venv)
+# ==============================================================================
 .env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ==============================================================================
+# IDEs and Text Editors
+# ==============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# ==============================================================================
+# Testing & Code Quality
+# ==============================================================================
+.pytest_cache/
+.htmlcov/
+.tox/
+.coverage
+.coverage.*
+coverage.xml
+nosetests.xml
+pylintrc
+.dmypy.json
+dmypy.json
+.mypy_cache/
+.ruff_cache/
+
+# ==============================================================================
+# Application Specific (Streamlit, Local DBs, Uploads)
+# ==============================================================================
+.streamlit/config.toml
+*.db
+*.sqlite
+*.log
+
+# Ignore local medical files/data you test with locally
+data/
+uploads/
