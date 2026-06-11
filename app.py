@@ -1,4 +1,5 @@
 import streamlit as st
+from src.ui import render_file_uploader
 
 st.set_page_config(
     page_title="MedGraph AI",
@@ -12,9 +13,4 @@ st.subheader("An AI EMR System for medical data in a graphical way")
 
 st.subheader("Input the medical file:")
 
-
-upload_file = st.file_uploader("Upload", type=["pdf"])
-
-
-if upload_file is not None:
-    st.success("File successfully uploaded!")
+medical_file = render_file_uploader()
