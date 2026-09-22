@@ -10,7 +10,10 @@ def render_page_config():
 
 def render_header():
     st.title("🧬 MedGraph-AI")
+    
+    # Notice the text string comes first, followed by the help parameter
     st.markdown(
+        "**An agentic pipeline for structuring unstructured medical documents.**", 
         help="Upload patient files below to extract vital signs, diagnoses, and chronological timelines."
     )
     st.markdown("---")
