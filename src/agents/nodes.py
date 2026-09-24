@@ -1,6 +1,7 @@
+import json
 from langchain_core.messages import HumanMessage, SystemMessage
 from .llm import primary_llm
-from .prompts import VISION_EXTRACTION_PROMPT
+from .prompts import VISION_EXTRACTION_PROMPT, TIMELINE_STRUCTURING_PROMPT
 from .state import MedGraphState
 
 def vision_extraction_node(state: MedGraphState) -> dict:
@@ -41,4 +42,47 @@ def vision_extraction_node(state: MedGraphState) -> dict:
         return {
             "status": "failed",
             "errors": [f"Vision extraction failed: {str(e)}"]
+        }
+
+def timeline_structuring_node(state: MedGraphState) -> dict:
+    extracted_text = state.get("extracted_text", "")
+    
+    if not extracted_text:
+        return {"status": "failed", "errors": ["No extracted text available for structuring."]}
+        
+    messages = [
+        SystemMessage(content=TIMELINE_STRUCTURING_PROMPT),
+        HumanMessage(content=f"Here is the raw medical data to structure:\n\n{extracted_text}")
+    ]
+    
+    try:
+        response = primary_llm.invoke(messages)
+        raw_output = response.content.strip()
+        
+        # Defensive programming: Strip markdown blocks if the LLM ignores the prompt rule
+        if raw_output.startswith("```json"):
+            raw_output = raw_output.replace("```json", "", 1)
+        if raw_output.endswith("```"):
+            raw_output = raw_output.rsplit("```", 1)[0]
+            
+        structured_events = json.loads(raw_output.strip())
+        
+        # Ensure the output matches our State expectation (a list of dictionaries)
+        if not isinstance(structured_events, list):
+            raise ValueError("LLM output is not a JSON list.")
+            
+        return {
+            "timeline_events": structured_events,
+            "status": "structuring_complete"
+        }
+        
+    except json.JSONDecodeError:
+        return {
+            "status": "failed",
+            "errors": ["Failed to parse LLM output into valid JSON."]
+        }
+    except Exception as e:
+        return {
+            "status": "failed",
+            "errors": [f"Timeline structuring failed: {str(e)}"]
         }
