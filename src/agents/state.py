@@ -1,25 +1,21 @@
-#Define Langgraph TypedDict State
+from typing import TypedDict, List, Dict, Any, Annotated
+import operator
 
-from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
-from typing import TypedDict, Annotated, List
-from langgraph.graph.message import add_messages
-from langchain_core.tools.retriever import create_retriever_tool
-
-load_dotenv()
-
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
-reviewer_llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
-
-class AgentState(TypedDict):
-    messages: Annotated[list, add_messages]
-    structured_data: dict
-    context: str
-    clinical_brief: str
-    guardrail_passed: bool
-
-retirever_tool = create_retriever_tool(
-    #retriever,
-    name="patient_history_search",
-    description = "Use this tool to search and retrieve the patient's medical history, past diagnoses, lab results and general health records.",
-)
+class MedGraphState(TypedDict):
+    # File metadata
+    file_name: str
+    mime_type: str
+    
+    # The raw input generated from Day 1 (e.g., base64 strings or OCR text)
+    raw_data: List[Dict[str, str]] 
+    
+    # The intermediate extraction layer
+    extracted_text: str
+    
+    # The final structured output for the ChronoHealth timeline
+    # operator.add allows nodes to append items to the list instead of overwriting it
+    timeline_events: Annotated[List[Dict[str, Any]], operator.add]
+    
+    # Workflow routing and error tracking
+    status: str
+    errors: Annotated[List[str], operator.add]
