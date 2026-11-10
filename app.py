@@ -2,7 +2,7 @@ import streamlit as st
 from src.ui import render_page_config, render_header, render_sidebar, render_file_uploader, render_timeline , render_review_ui
 from src.database import init_db, save_timeline_events, get_timeline_events
 from src.utils import process_medical_file
-from src.agents import compiled_graph
+from src.agents import compiled_graph, chat_graph
 
 def main():
     render_page_config()
@@ -62,6 +62,73 @@ def main():
     
     patient_events = get_timeline_events(active_patient)
     render_timeline(patient_events)
+
+    st.divider()
+    st.subheader("💬 Clinical Assistant & Guardrail")
+    
+    # Initialize or reset chat history when switching patients
+    if "chat_history" not in st.session_state or st.session_state.get("chat_patient") != active_patient:
+        st.session_state.chat_history = []
+        st.session_state.chat_patient = active_patient
+
+    # Render previous messages from the current session
+    for msg in st.session_state.chat_history:
+        with st.chat_message(msg["role"]):
+            if msg["role"] == "assistant":
+                # Render the visual compliance badges
+                if msg.get("status") == "PASS":
+                    st.success("✅ Passed Medical Compliance")
+                elif msg.get("status") == "FAIL":
+                    st.error(f"🛑 Blocked by Guardrail: {msg.get('reasoning')}")
+            st.markdown(msg["content"])
+
+    # Chat Input Trigger
+    if user_query := st.chat_input(f"Ask a question about {active_patient}'s medical history..."):
+        
+        # 1. Append and display the doctor's query
+        st.session_state.chat_history.append({"role": "user", "content": user_query})
+        with st.chat_message("user"):
+            st.markdown(user_query)
+            
+        # 2. Trigger the Guardrail pipeline
+        with st.chat_message("assistant"):
+            with st.spinner("Retrieving patient context and auditing draft..."):
+                try:
+                    initial_chat_state = {
+                        "patient_name": active_patient,
+                        "user_query": user_query,
+                        "retrieved_context": [],
+                        "draft_response": "",
+                        "final_response": "",
+                        "compliance_status": "",
+                        "guardrail_reasoning": ""
+                    }
+                    
+                    # Execute the linear routing graph we built in Part 3
+                    final_chat_state = chat_graph.invoke(initial_chat_state)
+                    
+                    status = final_chat_state.get("compliance_status")
+                    reasoning = final_chat_state.get("guardrail_reasoning")
+                    response_text = final_chat_state.get("final_response")
+                    
+                    # 3. Render the visual verdict
+                    if status == "PASS":
+                        st.success("✅ Passed Medical Compliance")
+                    else:
+                        st.error(f"🛑 Blocked by Guardrail: {reasoning}")
+                        
+                    st.markdown(response_text)
+                    
+                    # 4. Save the response and its compliance status to session memory
+                    st.session_state.chat_history.append({
+                        "role": "assistant",
+                        "content": response_text,
+                        "status": status,
+                        "reasoning": reasoning
+                    })
+                except Exception as e:
+                    st.error(f"Chat execution failed: {str(e)}")
+
 
 if __name__ == "__main__":
     main()
