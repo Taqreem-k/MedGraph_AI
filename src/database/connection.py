@@ -1,8 +1,6 @@
 import sqlite3
-import json
 import os
 
-# Define the database file location at the root of the project
 DB_PATH = "medgraph_core.db"
 
 def get_connection() -> sqlite3.Connection:
@@ -14,14 +12,14 @@ def init_db():
     conn = get_connection()
     cursor = conn.cursor()
 
-    # Table for storing the structured JSON events from the LangGraph output
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS timeline_events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            patient_name TEXT NOT NULL, -- NEW COLUMN ADDED HERE
             event_date TEXT NOT NULL,
             event_type TEXT NOT NULL,
             description TEXT NOT NULL,
-            metrics TEXT, -- We will store the metrics dictionary as a JSON string
+            metrics TEXT, 
             source_file TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )

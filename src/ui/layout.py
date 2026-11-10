@@ -1,4 +1,5 @@
 import streamlit as st
+from src.database import get_all_patients
 
 def render_page_config():
     st.set_page_config(
@@ -19,14 +20,44 @@ def render_header():
     st.markdown("---")
 
 def render_sidebar():
+    """Renders the sidebar navigation, settings, and patient selection."""
     with st.sidebar:
         st.header("⚙️ Settings & Status")
-        st.markdown("Manage system configurations and agent states here.")
-        
-        # Placeholders for Day 2/3 when we connect LangGraph and database states
+        st.markdown("Manage system configurations and patient contexts here.")
         st.divider()
-        st.metric(label="System Status", value="Ready 🟢")
-        st.metric(label="Loaded Records", value="0")
+        
+        # 1. Fetch existing patients from the database
+        existing_patients = get_all_patients()
+        
+        st.subheader("👤 Active Patient Context")
+        
+        # 2. Allow selecting an existing patient or creating a new one
+        patient_mode = st.radio("Patient Selection", ["Select Existing", "Add New Patient"], label_visibility="collapsed")
+        
+        if patient_mode == "Select Existing":
+            if existing_patients:
+                selected = st.selectbox("Select Patient", existing_patients)
+                st.session_state.current_patient = selected
+            else:
+                st.info("No patients found. Add a new one.")
+                st.session_state.current_patient = None
+        else:
+            new_patient = st.text_input("Enter New Patient Name")
+            if new_patient:
+                st.session_state.current_patient = new_patient.strip()
+            else:
+                st.session_state.current_patient = None
+                
+        if st.session_state.get("current_patient"):
+            st.success(f"Active: **{st.session_state.current_patient}**")
+        else:
+            st.warning("⚠️ No patient selected.")
+            
+        st.divider()
+        
+        # 3. System Status Indicators
+        st.caption("System Status")
+        st.markdown("<h2>Ready 🟢</h2>", unsafe_allow_html=True)
         
         st.divider()
         st.caption("Architecture: LangGraph + Streamlit")
