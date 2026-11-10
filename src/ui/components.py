@@ -44,14 +44,19 @@ def render_timeline(events: List[Dict[str, Any]]):
             # Display metrics beautifully using Streamlit columns
             if metrics:
                 st.markdown("**Extracted Metrics:**")
-                # Create dynamic columns based on how many metrics were found
                 cols = st.columns(len(metrics) if len(metrics) < 5 else 4)
                 
                 col_idx = 0
                 for key, value in metrics.items():
-                    # Clean up the dictionary keys for the UI display
                     clean_key = key.replace("_", " ").title()
-                    cols[col_idx % len(cols)].metric(label=clean_key, value=value)
+                    
+                    # FIX: Force the value into a string format so st.metric doesn't crash on lists/dicts
+                    if isinstance(value, (list, dict)):
+                        display_value = ", ".join(value) if isinstance(value, list) else str(value)
+                    else:
+                        display_value = str(value)
+                        
+                    cols[col_idx % len(cols)].metric(label=clean_key, value=display_value)
                     col_idx += 1
             
             st.caption(f"Source Document: {source}")
