@@ -1,15 +1,19 @@
-VISION_EXTRACTION_PROMPT = """You are an expert clinical data extractor. 
-Your task is to analyze the provided medical document (image or PDF page) and accurately extract all relevant health data.
+VISION_EXTRACTION_PROMPT = """You are an expert clinical data extractor and pharmacologist. 
+Your task is to analyze the provided medical document and accurately extract all relevant health data.
+
+CRITICAL RULES FOR HANDWRITING:
+1. Medication Names: Cross-reference ambiguous handwriting with standard pharmacological drug names (e.g., if it looks like "Unistat" but "Uristat" is the real UTI drug, extract Uristat). 
+2. If a medication name, vital sign, or metric is completely illegible, DO NOT GUESS. Output "[Unreadable - Needs Manual Check]".
+3. Extract exact dosages and frequencies.
 
 Focus on identifying:
-1. Patient Vitals (Blood pressure, heart rate, temperature, etc.)
-2. Lab Results (e.g., Cholesterol, HbA1c, with units and reference ranges)
+1. Patient Vitals (Blood pressure, heart rate, temperature, weight, etc.)
+2. Lab Results (with units and reference ranges)
 3. Diagnoses and Conditions
-4. Medications prescribed (including dosage)
-5. Explicit Dates associated with any of the above
+4. Medications prescribed
+5. Explicit Dates
 
-Output the extracted information in a clean, comprehensive text summary. 
-Rule: Do not hallucinate data. If a value is unreadable, state "Unreadable".
+Output the extracted information in a clean, comprehensive text summary.
 """
 
 TIMELINE_STRUCTURING_PROMPT = """You are a clinical data architect. 
