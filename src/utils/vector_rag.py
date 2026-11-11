@@ -13,7 +13,7 @@ if not os.getenv("GOOGLE_API_KEY"):
 
 # Initialize the Gemini embedding model
 # text-embedding-004 is currently the standard for Google GenAI embeddings
-embeddings_model = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+embeddings_model = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-2")
 
 def build_local_vector_store(text_chunks: List[str]) -> Optional[FAISS]:
     if not text_chunks:
