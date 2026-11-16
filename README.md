@@ -18,20 +18,31 @@
 
 ## 📸 System Showcase
 
-### 1. Chronological Health Timeline & Patient Routing
-*Dynamically structures unreadable prescriptions into clean, chronological medical events.*
+### 1. Dynamic Patient Routing & Isolation
+*Isolates medical records by patient, allowing clinicians to seamlessly switch contexts or add new patient profiles directly from the sidebar.*
 <br>
-<img src="assets/timeline_ui.png" alt="MedGraph Timeline UI" width="800"/>
+<img src="assets/new_feature.png" alt="Add New Patient Feature" width="800"/>
 
 ### 2. Human-in-the-Loop (HITL) Clinical Review
-*Requires manual verification of AI-extracted pharmacology and vitals before database commit.*
+*Requires manual verification of AI-extracted pharmacology and vitals in an editable form before database commit.*
 <br>
-<img src="assets/hitl_editor.png" alt="Human in the loop editor" width="800"/>
+<img src="assets/editable.png" alt="Human in the loop editor" width="800"/>
 
-### 3. Medical Compliance Guardrail & RAG Chat
-*Secondary LLM evaluator ensures the chat agent strictly adheres to the verified patient context.*
+### 3. In-Depth Chronological Health Timeline
+*Dynamically structures unreadable prescriptions into clean, chronological medical events. All data is perfectly categorized by visit date, vitals, prescriptions, and lab orders.*
 <br>
-<img src="assets/guardrail_pass.png" alt="Guardrail execution" width="800"/>
+<img src="assets/Patient_timeline_1.png" alt="Timeline Overview" width="800"/>
+<img src="assets/Patient_timeline_detail_1.png" alt="Timeline Detail 1" width="800"/>
+<img src="assets/Patient_timeline_detail_2.png" alt="Timeline Detail 2" width="800"/>
+<img src="assets/Patient_timeline_detail_3.png" alt="Timeline Detail 3" width="800"/>
+<img src="assets/Patient_timeline_detail_4.png" alt="Timeline Detail 4" width="800"/>
+
+### 4. Medical Compliance Guardrail & RAG Chat
+*Secondary LLM evaluator ensures the chat agent strictly adheres to the verified patient context. It successfully passes safe queries (top) and explicitly blocks hallucinated diagnostics or unauthorized prescriptions (bottom).*
+<br>
+<img src="assets/guardrail_pass.png" alt="Guardrail Pass" width="800"/>
+<br><br>
+<img src="assets/guardrail_fail.png" alt="Guardrail Fail" width="800"/>
 
 ## 🛠️ Technology Stack
 
