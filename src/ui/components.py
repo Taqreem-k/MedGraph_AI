@@ -39,7 +39,11 @@ def render_review_ui(events: List[Dict[str, Any]]) -> tuple[bool, List[Dict[str,
                 for k, v in metrics.items():
                     with metric_cols[m_idx % 3]:
                         clean_key = k.replace("_", " ").title()
-                        val_str = ", ".join(v) if isinstance(v, list) else str(v)
+                        if isinstance(v, list):
+                            # Convert every item in the list to a string first before joining
+                            val_str = ", ".join([str(item) for item in v])
+                        else:
+                            val_str = str(v)
                         # Render individual input boxes for each metric (e.g., Blood Pressure)
                         new_val = st.text_input(clean_key, value=val_str, key=f"metric_{i}_{k}")
                         new_metrics[k] = new_val
